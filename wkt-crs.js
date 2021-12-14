@@ -56,7 +56,7 @@ function parse(wkt, options) {
   const result = process(data, [data]);
   if (debug) console.log("[wktcrs] parse returning", result);
 
-  return result;
+  return { data: result };
 }
 
 const _module = { parse };
