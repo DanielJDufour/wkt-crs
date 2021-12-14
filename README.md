@@ -73,6 +73,9 @@ wktcrs.parse(wkt, { raw: true }).data.PROJCS.GEOGCS.UNIT[2]
 // "0.0174532925199433"
 ```
 
+# alternatives
+- wkt-parser: https://github.com/proj4js/wkt-parser
+
 # references
 - OGC Standard: https://www.ogc.org/standards/wkt-crs
 - Wikipedia Page: https://en.wikipedia.org/wiki/Well-known_text_representation_of_coordinate_reference_systems
