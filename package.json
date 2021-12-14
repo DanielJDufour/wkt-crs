@@ -1,6 +1,6 @@
 {
   "name": "wkt-crs",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Parse WKT-CRS (Well-known text representation of coordinate reference systems)",
   "main": "wkt-crs.js",
   "files": [
