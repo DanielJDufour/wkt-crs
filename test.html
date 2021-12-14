@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="./node_modules/flug/index.js"></script>
+    <script src="./wkt-crs.js"></script>
+    <script>
+      // override requires
+      window.require = function(path) {
+        if (path === "flug") return test;
+        else if (path === "./wkt-crs.js") return wktcrs;
+      }
+    </script>
+    <script src="./test.js" type="module"></script>
+  </head>
+</html>

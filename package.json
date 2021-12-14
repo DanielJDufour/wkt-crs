@@ -1,0 +1,34 @@
+{
+  "name": "wkt-crs",
+  "version": "0.0.0",
+  "description": "Parse WKT-CRS (Well-known text representation of coordinate reference systems)",
+  "main": "wkt-crs.js",
+  "scripts": {
+    "format": "npx prettier --arrow-parens=avoid --print-width=120 --trailing-comma=none --write *.js",
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielJDufour/wkt-crs.git"
+  },
+  "keywords": [
+    "crs",
+    "geographic",
+    "geospatial",
+    "gis",
+    "proj",
+    "proj4",
+    "projection",
+    "srs",
+    "wkt"
+  ],
+  "author": "Daniel J. Dufour",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/DanielJDufour/wkt-crs/issues"
+  },
+  "homepage": "https://github.com/DanielJDufour/wkt-crs#readme",
+  "devDependencies": {
+    "flug": "^2.2.0"
+  }
+}
