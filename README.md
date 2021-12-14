@@ -1,6 +1,12 @@
 # wkt-crs
 Parse WKT-CRS ([Well-known text representation of coordinate reference systems](https://en.wikipedia.org/wiki/Well-known_text_representation_of_coordinate_reference_systems))
 
+# features
+- simple JSON format
+- numerical precision preservation
+- familiar array item lookups like `data[1]`
+- ergonomic object key lookups like `data.PROJCS.GEOGCS.DATUM`
+
 # install
 - in the terminal, run  `npm install wkt-crs`
 - in html, add `<script src="https://unpkg.com/wkt-crs"></script>`
