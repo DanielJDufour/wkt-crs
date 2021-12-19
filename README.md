@@ -69,14 +69,29 @@ using `data.PROJCS.GEOGCS.DATUM` instead of `data[0][2][2]`.
 Sometimes WKT will repeat some keywords for the same array.  For example, you might have multiple
 "PARAMETER[...]" as in the above example.  In this case, you will find an array of the multiple at
 "MULTIPLE_{KEYWORD}", as in "MULTIPLE_PARAMETER".
-### numerical precision
-By default, wkt-crs automatically converts any number to its JavaScript Float64 representation.
-If you require higher precision, calling wkt-crs with an options object where "raw: true" will
-keep numbers as strings, preserving as they appear in the input WKT string.  For example,
-to get the raw string of the datum's unit.
+### raw mode
+By default, wkt-crs automatically converts any number to its JavaScript Float64 representation 
+and converts variable keywords to strings.  If you need to preserve the raw literal value as it appears in the wkt,
+calling wkt-crs with an options object where "raw: true" will keep numbers as strings and preserve variable information.
 ```js
-wktcrs.parse(wkt, { raw: true }).data.PROJCS.GEOGCS.UNIT[2]
-// "0.0174532925199433"
+wktcrs.parse(`UNIT["degree",0.0174532925199433,AUTHORITY["EPSG", "9122"]]`, { raw: true });
+{
+  data: [
+    "UNIT",
+    "degree",
+    "raw:0.0174532925199433", // number is exactly the same as it appears in the wkt
+    ["AUTHORITY", "EPSG", "9122"]
+  ]
+}
+
+wktcrs.parse(`AXIS["Easting",EAST]`, { raw: true });
+{
+  data: [
+    "AXIS",
+    "Easting",
+    "raw:EAST" // raw: indicates it is a variable named EAST
+  ]
+}
 ```
 
 # alternatives
