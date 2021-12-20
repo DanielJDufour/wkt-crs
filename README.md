@@ -124,13 +124,13 @@ unparse([
           "SPHEROID",
           "Clarke 1866",
           6378206.4,
-          294.9786982139006,
+          "raw:294.9786982139006",
           ["AUTHORITY", "EPSG", "7008"]
         ],
         ["AUTHORITY", "EPSG", "6267"]
       ],
       ["PRIMEM", "Greenwich", 0, ["AUTHORITY", "EPSG", "8901"]],
-      ["UNIT", "degree", 0.0174532925199433, ["AUTHORITY", "EPSG", "9122"] ],
+      ["UNIT", "degree", "raw:0.0174532925199433", ["AUTHORITY", "EPSG", "9122"] ],
       ["AUTHORITY", "EPSG", "4267"]
     ],
     ["PROJECTION", "Transverse_Mercator"],
@@ -140,8 +140,8 @@ unparse([
     ["PARAMETER", "false_easting", 500000],
     ["PARAMETER", "false_northing", 0],
     ["UNIT", "metre", 1, ["AUTHORITY", "EPSG", "9001"]],
-    ["AXIS", "Easting", "EAST"],
-    ["AXIS", "Northing", "NORTH"],
+    ["AXIS", "Easting", "raw:EAST"],
+    ["AXIS", "Northing", "raw:NORTH"],
     ["AUTHORITY", "EPSG", "26716"]
   ]
 ]);
