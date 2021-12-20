@@ -1,34 +1,42 @@
 function parse(wkt, options) {
+  const raw = typeof options === "object" && options.raw === true;
   const debug = typeof options === "object" && options.debug === true;
 
   if (debug) console.log("[wktcrs] parse starting with\n", wkt);
 
   // move all keywords into first array item slot
   // from PARAM[12345, 67890] to ["PARAM", 12345, 67890]
-  wkt = wkt.replace(/[A-Z_]+\[/gi, function (match) {
+  wkt = wkt.replace(/[A-Z][A-Z\d_]+\[/gi, function (match) {
     return '["' + match.substr(0, match.length - 1) + '",';
   });
 
   // wrap variables in strings
   // from [...,NORTH] to [...,"NORTH"]
-  wkt = wkt.replace(/, ?([A-Z_]+)/gi, function (match, p1) {
-    return "," + '"' + p1 + '"';
+  wkt = wkt.replace(/, ?([A-Z][A-Z\d_]+[,\]])/gi, function (match, p1) {
+    const varname = p1.substr(0, p1.length - 1);
+    return "," + '"' + (raw ? "raw:" : "") + varname + '"' + p1[p1.length - 1];
   });
 
   if (typeof options === "object" && options.raw === true) {
     // replace all numbers with strings
-    wkt = wkt.replace(/, ?([\.\d]+)/g, function (match, p1) {
-      return "," + '"' + p1 + '"';
+    wkt = wkt.replace(/, {0,2}(-?[\.\d]+)/g, function (match, p1) {
+      return "," + '"' + (raw ? "raw:" : "") + p1 + '"';
     });
   }
 
   // str should now be valid JSON
   if (debug) console.log("[wktcrs] json'd wkt: '" + wkt + "'");
-  const data = JSON.parse(wkt);
+  let data;
+  try {
+    data = JSON.parse(wkt);
+  } catch (error) {
+    console.error(`[wktcrs] failed to parse '${wkt}'`);
+    throw error;
+  }
+
   if (debug) console.log("[wktcrs] json parsed: '" + wkt + "'");
 
   function process(data, parent) {
-    // const kw = data.shift();
     const kw = data[0];
 
     // after removing the first element with .shift()
@@ -59,7 +67,42 @@ function parse(wkt, options) {
   return { data: result };
 }
 
-const _module = { parse };
+// convert JSON representation of Well-Known Text
+// back to standard Well-Known Text
+function unparse(wkt, options) {
+  if (Array.isArray(wkt) && wkt.length == 1 && Array.isArray(wkt[0])) {
+    wkt = wkt[0]; // ignore first extra wrapper array
+  }
+
+  const [kw, ...attrs] = wkt;
+  const str =
+    kw +
+    "[" +
+    attrs
+      .map(attr => {
+        if (Array.isArray(attr)) {
+          return unparse(attr, options).data;
+        } else if (typeof attr === "number") {
+          return attr.toString();
+        } else if (typeof attr === "string") {
+          // can't automatically convert all caps to varibale
+          // because EPSG is string in AUTHORITY["EPSG", ...]
+          if (attr.startsWith("raw:")) {
+            // convert "raw:NORTH" to NORTH
+            return attr.replace("raw:", "");
+          } else {
+            return '"' + attr + '"';
+          }
+        } else {
+          throw new Error('[wktcrs] unexpected attribute "' + attr + '"');
+        }
+      })
+      .join(",") +
+    "]";
+  return { data: str };
+}
+
+const _module = { parse, unparse };
 if (typeof define === "function")
   define(function () {
     return _module;
