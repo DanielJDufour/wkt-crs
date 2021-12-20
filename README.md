@@ -74,7 +74,7 @@ Sometimes WKT will repeat some keywords for the same array.  For example, you mi
 ### raw mode
 By default, wkt-crs automatically converts any number to its JavaScript Float64 representation 
 and converts variable keywords to strings.  If you need to preserve raw literal values as they appears in the WKT,
-call parse with an options object where "raw" is `true`.  You might prefer raw mode if you want to recreate the original WKT later, don't trust the floating point precision of JavaScript numbers, or need to distinguish between a string with the same value as a variable name.
+call parse with an options object where `raw` is `true`.  You might prefer raw mode if you want to recreate the original WKT later, don't trust the floating point precision of JavaScript numbers, or need to distinguish between a string with the same value as a variable name.
 ```js
 wktcrs.parse(`UNIT["degree",0.0174532925199433,AUTHORITY["EPSG", "9122"]]`, { raw: true });
 {
