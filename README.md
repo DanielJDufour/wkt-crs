@@ -1,5 +1,5 @@
 # wkt-crs
-Parse WKT-CRS ([Well-known text representation of coordinate reference systems](https://en.wikipedia.org/wiki/Well-known_text_representation_of_coordinate_reference_systems))
+Read and Write WKT-CRS ([Well-known text representation of coordinate reference systems](https://en.wikipedia.org/wiki/Well-known_text_representation_of_coordinate_reference_systems))
 
 # features
 - zero dependencies
@@ -80,11 +80,11 @@ wktcrs.parse(`UNIT["degree",0.0174532925199433,AUTHORITY["EPSG", "9122"]]`, { ra
 {
   data: [
     // the first item in an array is always the keyword name of the array,
-    // so there's not need for `"raw:UNIT"`
+    // so there's no need for "raw:UNIT"
     "UNIT",
     
-    // degree appears as the string "degree" in the source wkt,
-    // so there's no need to change it
+    // "degree" appears as a string in the source wkt
+    // with quotes around it, so there's no need to change it
     "degree",
     
     // number is exactly the same as it appears in the wkt
@@ -102,6 +102,51 @@ wktcrs.parse(`AXIS["Easting",EAST]`, { raw: true });
     "raw:EAST" // attribute is equal to the variable EAST and not the string "EAST"
   ]
 }
+```
+### writing
+If you need to write WKT, or in other words, convert JSON back to WKT, use the **unparse** function.  You basically call
+**unparse** on JSON data that is in the same layout as returned by **parse**.  Numbers will be stringified by your JavaScript
+engine before being written and anything after `raw:` will be written directly into the output without quotes.
+```js
+import { unparse } from "wkt-crs";
+
+unparse([
+  [
+    "PROJCS",
+    "NAD27 / UTM zone 16N",
+    [
+      "GEOGCS",
+      "NAD27",
+      [
+        "DATUM",
+        "North_American_Datum_1927",
+        [
+          "SPHEROID",
+          "Clarke 1866",
+          6378206.4,
+          294.9786982139006,
+          ["AUTHORITY", "EPSG", "7008"]
+        ],
+        ["AUTHORITY", "EPSG", "6267"]
+      ],
+      ["PRIMEM", "Greenwich", 0, ["AUTHORITY", "EPSG", "8901"]],
+      ["UNIT", "degree", 0.0174532925199433, ["AUTHORITY", "EPSG", "9122"] ],
+      ["AUTHORITY", "EPSG", "4267"]
+    ],
+    ["PROJECTION", "Transverse_Mercator"],
+    ["PARAMETER", "latitude_of_origin", 0],
+    ["PARAMETER", "central_meridian", -87],
+    ["PARAMETER", "scale_factor", 0.9996],
+    ["PARAMETER", "false_easting", 500000],
+    ["PARAMETER", "false_northing", 0],
+    ["UNIT", "metre", 1, ["AUTHORITY", "EPSG", "9001"]],
+    ["AXIS", "Easting", "EAST"],
+    ["AXIS", "Northing", "NORTH"],
+    ["AUTHORITY", "EPSG", "26716"]
+  ]
+]);
+// returns
+{ data: `PROJCS["NAD27 / UTM zone 16N",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982139006,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-87],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","26716"]]` }
 ```
 
 # alternatives
