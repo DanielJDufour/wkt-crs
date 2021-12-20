@@ -79,9 +79,17 @@ call parse with an options object where "raw" is `true`.  You might prefer raw m
 wktcrs.parse(`UNIT["degree",0.0174532925199433,AUTHORITY["EPSG", "9122"]]`, { raw: true });
 {
   data: [
+    // the first item in an array is always the keyword name of the array,
+    // so there's not need for `"raw:UNIT"`
     "UNIT",
+    
+    // degree appears as the string "degree" in the source wkt,
+    // so there's no need to change it
     "degree",
-    "raw:0.0174532925199433", // number is exactly the same as it appears in the wkt
+    
+    // number is exactly the same as it appears in the wkt
+    "raw:0.0174532925199433",
+    
     ["AUTHORITY", "EPSG", "9122"]
   ]
 }
