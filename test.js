@@ -1,3 +1,4 @@
+const fs = require("fs");
 const test = require("flug");
 const wktcrs = require("./wkt-crs.js");
 
@@ -6,6 +7,13 @@ const roundtrip = wkt => {
 };
 
 const condense = wkt => wkt.trim().replace(/(?<=[,\[\]])[ \n]+/g, "");
+
+test("parse inner parens", ({ eq }) => {
+  const wkt =
+    'GEOGCS["GRS 1980(IUGG, 1980)",DATUM["unknown",SPHEROID["GRS80",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["epsg","7686"]]';
+  const { data } = wktcrs.parse(wkt, { debug: false, raw: true });
+  eq(data.GEOGCS[0], "GEOGCS");
+});
 
 test(`unparse authority`, ({ eq }) => {
   const authority = ["AUTHORITY", "EPSG", "9122"];
@@ -163,6 +171,29 @@ test("another parse bug", ({ eq }) => {
   eq(data.PROJCS[1], "ETRS89 / TM35FIN(E,N)");
   eq(data.PROJCS.MULTIPLE_AXIS[1][2], "NORTH");
   eq(roundtrip(wkt), wkt);
+});
+
+test("try to parse everything in crs.json", ({ eq }) => {
+  let data = require("./crs.json");
+  data = data.map(({ wkt, esriwkt, prettywkt }) => ({
+    raw: {
+      wkt: wktcrs.parse(wkt, { raw: true }).data,
+      esriwkt: wktcrs.parse(esriwkt, { raw: true }).data,
+      prettywkt: wktcrs.parse(prettywkt, { raw: true }).data
+    },
+    dynamic: {
+      wkt: wktcrs.parse(wkt, { raw: false }).data,
+      esriwkt: wktcrs.parse(esriwkt, { raw: false }).data,
+      prettywkt: wktcrs.parse(prettywkt, { raw: false }).data
+    }
+  }));
+
+  // prettywkt and wkt should be equivalent
+  // only difference was white space
+  data.every(({ raw, dynamic }) => {
+    eq(raw.wkt, raw.prettywkt);
+    eq(dynamic.wkt, dynamic.prettywkt);
+  });
 });
 
 // test("7.5.6.3 Axis unit for ordinal coordinate systems", ({ eq }) => {

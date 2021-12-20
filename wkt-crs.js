@@ -19,7 +19,7 @@ function parse(wkt, options) {
 
   if (typeof options === "object" && options.raw === true) {
     // replace all numbers with strings
-    wkt = wkt.replace(/, {0,2}(-?[\.\d]+)/g, function (match, p1) {
+    wkt = wkt.replace(/, {0,2}(-?[\.\d]+)(?=,|\])/g, function (match, p1) {
       return "," + '"' + (raw ? "raw:" : "") + p1 + '"';
     });
   }
