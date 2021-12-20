@@ -105,3 +105,6 @@ dist
 
 # pnpm lock file
 pnpm-lock.yaml
+
+# test files
+crs.json

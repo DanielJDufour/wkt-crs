@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "format": "npx prettier --arrow-parens=avoid --print-width=120 --trailing-comma=none --write *.js",
+    "setup": "wget https://github.com/DanielJDufour/crs-json/raw/main/crs.json.zip && unzip crs.json.zip && rm crs.json.zip",
     "test": "node test.js"
   },
   "repository": {
