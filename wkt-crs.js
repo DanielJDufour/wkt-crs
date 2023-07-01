@@ -1,3 +1,53 @@
+function sort(data, { keywords } = {}) {
+  const keys = Object.keys(data).filter(k => !/\d+/.test(k));
+
+  if (!keywords) {
+    keywords = [];
+    // try to find multiples
+    const counts = {};
+    if (Array.isArray(data)) {
+      data.forEach(it => {
+        if (Array.isArray(it) && it.length >= 2 && typeof it[1] === "string") {
+          const k = it[0];
+          if (!counts[k]) counts[k] = 0;
+          counts[k]++;
+        }
+      });
+      for (let k in counts) {
+        if (counts[k] > 0) keywords.push(k);
+      }
+    }
+  }
+
+  keys.forEach(key => {
+    data[key] = sort(data[key]);
+  });
+
+  keywords.forEach(key => {
+    const indices = [];
+    const params = [];
+    data.forEach((item, i) => {
+      if (Array.isArray(item) && item[0] === key) {
+        indices.push(i);
+        params.push(item);
+      }
+    });
+
+    params.sort((a, b) => {
+      a = a[1].toString();
+      b = b[1].toString();
+      return a < b ? -1 : a > b ? 1 : 0;
+    });
+
+    // replace in order
+    params.forEach((param, i) => {
+      data[indices[i]] = param;
+    });
+  });
+
+  return data;
+}
+
 function parse(wkt, options) {
   const raw = typeof options === "object" && options.raw === true;
   const debug = typeof options === "object" && options.debug === true;
@@ -102,7 +152,7 @@ function unparse(wkt, options) {
   return { data: str };
 }
 
-const _module = { parse, unparse };
+const _module = { parse, unparse, sort };
 if (typeof define === "function")
   define(function () {
     return _module;

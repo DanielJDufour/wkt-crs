@@ -8,6 +8,33 @@ const roundtrip = wkt => {
 
 const condense = wkt => wkt.trim().replace(/(?<=[,\[\]])[ \n]+/g, "");
 
+test("sort parameters", ({ eq }) => {
+  const wkt =
+    'PROJCS["WGS_1984_Antarctic_Polar_Stereographic",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Stereographic_South_Pole"],PARAMETER["False_Easting",0.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Standard_Parallel_1",-71.0],UNIT["Meter",1.0]]';
+  const { data } = wktcrs.parse(wkt, { debug: false, raw: true });
+  wktcrs.sort(data);
+  eq(
+    wktcrs.unparse(data).data,
+    'PROJCS["WGS_1984_Antarctic_Polar_Stereographic",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Stereographic_South_Pole"],PARAMETER["Central_Meridian",0.0],PARAMETER["False_Easting",0.0],PARAMETER["False_Northing",0.0],PARAMETER["Standard_Parallel_1",-71.0],UNIT["Meter",1.0]]'
+  );
+});
+
+test("sort example", ({ eq }) => {
+  const data = ["EXAMPLE", ["AXIS", "Northing", "raw:NORTH"], ["AXIS", "Easting", "raw:EAST"]];
+  wktcrs.sort(data);
+  eq(data, ["EXAMPLE", ["AXIS", "Easting", "raw:EAST"], ["AXIS", "Northing", "raw:NORTH"]]);
+});
+
+test("sort params", ({ eq }) => {
+  const wkt = `PARAMETERS[PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-87],PARAMETER["scale_factor",0.9996]]`;
+  const { data } = wktcrs.parse(wkt, { debug: false, raw: true });
+  wktcrs.sort(data);
+  eq(
+    wktcrs.unparse(data).data,
+    'PARAMETERS[PARAMETER["central_meridian",-87],PARAMETER["latitude_of_origin",0],PARAMETER["scale_factor",0.9996]]'
+  );
+});
+
 test("parse inner parens", ({ eq }) => {
   const wkt =
     'GEOGCS["GRS 1980(IUGG, 1980)",DATUM["unknown",SPHEROID["GRS80",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["epsg","7686"]]';

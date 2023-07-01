@@ -7,7 +7,7 @@ Read and Write WKT-CRS ([Well-known text representation of coordinate reference 
 - numerical precision preservation
 - familiar array item lookups like `data[1]`
 - ergonomic object key lookups like `data.PROJCS.GEOGCS.DATUM`
-
+- sort keywords like PARAMETER and AXIS
 
 # install
 - in the terminal, run  `npm install wkt-crs`
@@ -103,6 +103,27 @@ wktcrs.parse(`AXIS["Easting",EAST]`, { raw: true });
   ]
 }
 ```
+### sorting
+You can sort the keywords in the parsed object.  Warning: this will mutate the object.
+```js
+import { sort } from "wkt-crs";
+
+const data = [
+  'EXAMPLE',
+  [ 'AXIS', 'Northing', 'raw:NORTH' ],
+  [ 'AXIS', 'Easting', 'raw:EAST' ],
+];
+sort(data);
+[
+  'EXAMPLE',
+  [ 'AXIS', 'Easting', 'raw:EAST' ],
+  [ 'AXIS', 'Northing', 'raw:NORTH' ]
+];
+
+// only sort specific keywords
+sort(data, { keywords: ["PARAMETER"] })
+```
+
 ### writing
 If you need to write WKT, or in other words, convert JSON back to WKT, use the **unparse** function.  You basically call
 **unparse** on JSON data that is in the same layout as returned by **parse**.  Numbers will be stringified by your JavaScript
