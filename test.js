@@ -100,7 +100,6 @@ test("unparse GEOGCS", ({ eq }) => {
 test(`NAD27 / UTM zone 16N`, ({ eq }) => {
   const wkt = `PROJCS["NAD27 / UTM zone 16N",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982139006,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-87],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","26716"]]`;
   const { data } = wktcrs.parse(wkt, { raw: false, debug: false });
-  // console.log(JSON.stringify(data, undefined, 2));
   eq(data.length, 1);
   eq(Object.keys(data), ["0", "PROJCS"]);
   eq(data.PROJCS.AUTHORITY, ["AUTHORITY", "EPSG", "26716"]);
@@ -208,6 +207,19 @@ test("another parse bug", ({ eq }) => {
   eq(data.PROJCS[1], "ETRS89 / TM35FIN(E,N)");
   eq(data.PROJCS.MULTIPLE_AXIS[1][2], "NORTH");
   eq(roundtrip(wkt), wkt);
+});
+
+test("pretty", ({ eq }) => {
+  const wkt =
+    'PROJCS["WGS_1984_Antarctic_Polar_Stereographic",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Stereographic_South_Pole"],PARAMETER["False_Easting",0.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Standard_Parallel_1",-71.0],UNIT["Meter",1.0]]';
+  const { data } = wktcrs.parse(wkt, { debug: false, raw: true });
+  wktcrs.sort(data);
+  const prettywkt = wktcrs.unparse(data, { pretty: true }).data;
+  // console.log(prettywkt);
+  eq(
+    prettywkt,
+    `PROJCS["WGS_1984_Antarctic_Polar_Stereographic",\n  GEOGCS["GCS_WGS_1984",\n    DATUM["D_WGS_1984",\n      SPHEROID["WGS_1984",6378137.0,298.257223563]],\n    PRIMEM["Greenwich",0.0],\n    UNIT["Degree",0.0174532925199433]],\n  PROJECTION["Stereographic_South_Pole"],\n  PARAMETER["Central_Meridian",0.0],\n  PARAMETER["False_Easting",0.0],\n  PARAMETER["False_Northing",0.0],\n  PARAMETER["Standard_Parallel_1",-71.0],\n  UNIT["Meter",1.0]]`
+  );
 });
 
 test("try to parse everything in crs.json", ({ eq }) => {
