@@ -28,7 +28,17 @@ test("sort example", ({ eq }) => {
 test("sort params", ({ eq }) => {
   const wkt = `PARAMETERS[PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-87],PARAMETER["scale_factor",0.9996]]`;
   const { data } = wktcrs.parse(wkt, { debug: false, raw: true });
+  eq(data[0].MULTIPLE_PARAMETER, [
+    ["PARAMETER", "latitude_of_origin", "raw:0"],
+    ["PARAMETER", "central_meridian", "raw:-87"],
+    ["PARAMETER", "scale_factor", "raw:0.9996"]
+  ]);
   wktcrs.sort(data);
+  eq(data[0].MULTIPLE_PARAMETER, [
+    ["PARAMETER", "central_meridian", "raw:-87"],
+    ["PARAMETER", "latitude_of_origin", "raw:0"],
+    ["PARAMETER", "scale_factor", "raw:0.9996"]
+  ]);
   eq(
     wktcrs.unparse(data).data,
     'PARAMETERS[PARAMETER["central_meridian",-87],PARAMETER["latitude_of_origin",0],PARAMETER["scale_factor",0.9996]]'
