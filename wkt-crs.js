@@ -60,6 +60,13 @@ function parse(wkt, options) {
     return '["' + match.substr(0, match.length - 1) + '",';
   });
 
+  // pull out all quoted strings
+  const literals = [];
+  wkt = wkt.replace(/"([^"]*)"/g, (_, inner) => {
+    literals.push(inner);
+    return `"__LITERAL${literals.length - 1}__"`;
+  });
+
   // wrap variables in strings
   // from [...,NORTH] to [...,"NORTH"]
   wkt = wkt.replace(/, ?([A-Z][A-Z\d_]+[,\]])/gi, function (match, p1) {
@@ -73,6 +80,11 @@ function parse(wkt, options) {
       return "," + '"' + (raw ? "raw:" : "") + p1 + '"';
     });
   }
+
+  // restore original quoted strings
+  wkt = wkt.replace(/"__LITERAL(\d+)__"/g, (_, idx) => {
+    return `"${literals[+idx]}"`;
+  });
 
   // str should now be valid JSON
   if (debug) console.log("[wktcrs] json'd wkt: '" + wkt + "'");
