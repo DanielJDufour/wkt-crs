@@ -152,7 +152,9 @@ function unparse(wkt, options) {
     attrs
       .map(attr => {
         if (Array.isArray(attr)) {
-          return (pretty ? "\n" + repeat(" ", indent) : "") + unparse(attr, { indent: indent + 2, pretty: pretty }).data;
+          return (
+            (pretty ? "\n" + repeat(" ", indent) : "") + unparse(attr, { indent: indent + 2, pretty: pretty }).data
+          );
         } else if (typeof attr === "number") {
           return attr.toString();
         } else if (typeof attr === "string") {
