@@ -1,3 +1,9 @@
+function repeat(str, ct) {
+  let out = "";
+  for (let i = 0; i < ct; i++) out += str;
+  return out;
+}
+
 function sort(data, { keywords } = {}) {
   const keys = Object.keys(data).filter(k => !/\d+/.test(k));
 
@@ -132,6 +138,9 @@ function parse(wkt, options) {
 // convert JSON representation of Well-Known Text
 // back to standard Well-Known Text
 function unparse(wkt, options) {
+  const indent = typeof options === "object" && typeof options.indent === "number" ? options.indent : 2;
+  const pretty = typeof options === "object" && typeof options.pretty === "boolean" ? options.pretty : false;
+
   if (Array.isArray(wkt) && wkt.length == 1 && Array.isArray(wkt[0])) {
     wkt = wkt[0]; // ignore first extra wrapper array
   }
@@ -143,7 +152,9 @@ function unparse(wkt, options) {
     attrs
       .map(attr => {
         if (Array.isArray(attr)) {
-          return unparse(attr, options).data;
+          return (
+            (pretty ? "\n" + repeat(" ", indent) : "") + unparse(attr, { indent: indent + 2, pretty: pretty }).data
+          );
         } else if (typeof attr === "number") {
           return attr.toString();
         } else if (typeof attr === "string") {
