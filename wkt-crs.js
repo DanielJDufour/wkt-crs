@@ -147,7 +147,6 @@ function unparse(wkt, options) {
 
   const [kw, ...attrs] = wkt;
   const str =
-    (pretty && false && attrs.some(it => Array.isArray(it)) ? "\n" + " ".repeat(indent) : "") +
     kw +
     "[" +
     attrs
